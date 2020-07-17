@@ -14,4 +14,15 @@ class Contact {
     this.type,
     this.country,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'phone': phone,
+      'email': email,
+      'type': type,
+      'country': country,
+    };
+  }
 }

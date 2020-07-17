@@ -1,7 +1,10 @@
 import "package:sqflite/sqflite.dart";
 import "package:path/path.dart";
+import "contact_model.dart";
 
 class ContactsDatabase {
+  static Database _db;
+
   Future<Database> initDatabase() async {
     final Future<Database> database = openDatabase(
       join(await getDatabasesPath(), "contacts_database.db"),
@@ -21,6 +24,48 @@ class ContactsDatabase {
       },
     );
 
-    return database;
+    _db = await database;
+
+    return _db;
+  }
+
+  Future<List<Contact>> getContacts() async {
+    final List<Map<String, dynamic>> contactsMap = await _db.query('contacts');
+
+    return List.generate(contactsMap.length, (index) {
+      return Contact(
+        id: contactsMap[index]['id'],
+        name: contactsMap[index]['name'],
+        phone: contactsMap[index]['phone'],
+        email: contactsMap[index]['email'],
+        type: contactsMap[index]['type'],
+        country: contactsMap[index]['country'],
+      );
+    });
+  }
+
+  Future<int> insertContact(Contact contact) async {
+    return await _db.insert(
+      'contacts',
+      contact.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<int> updateContact(Contact contact) async {
+    return await _db.update(
+      'contacts',
+      contact.toMap(),
+      where: "id = ?",
+      whereArgs: [contact.id],
+    );
+  }
+
+  Future<int> deleteContact(int id) async {
+    return await _db.delete(
+      'contacts',
+      where: "id = ?",
+      whereArgs: [id],
+    );
   }
 }
