@@ -5,9 +5,16 @@ import "contact_model.dart";
 class ContactsDatabase {
   static Database _db;
 
-  Future<Database> initDatabase() async {
+  ContactsDatabase() {
+    initDatabase();
+  }
+
+  Future<void> initDatabase() async {
+    String path = join(await getDatabasesPath(), "contacts_database.db");
+    print("path name: " + path);
+
     final Future<Database> database = openDatabase(
-      join(await getDatabasesPath(), "contacts_database.db"),
+      path,
       version: 1,
       onCreate: (db, version) {
         db.execute(
@@ -25,8 +32,6 @@ class ContactsDatabase {
     );
 
     _db = await database;
-
-    return _db;
   }
 
   Future<List<Contact>> getContacts() async {
