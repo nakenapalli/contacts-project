@@ -18,7 +18,12 @@ class _ContactsListState extends State<ContactsList> {
   void initState() async {
     super.initState();
     database = ContactsDatabase();
+    addContactsTest();
     contacts = await database.getContacts();
+  }
+
+  void addContactsTest() {
+    database.insertContact(Contact(name: "Nikhil"));
   }
 
   @override
