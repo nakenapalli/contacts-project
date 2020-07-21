@@ -11,10 +11,13 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
-  final database = ContactsDatabase();
+  ContactsDatabase database;
   List<Contact> contacts;
 
-  Future<void> getContacts() async {
+  @override
+  void initState() async {
+    super.initState();
+    database = ContactsDatabase();
     contacts = await database.getContacts();
   }
 
