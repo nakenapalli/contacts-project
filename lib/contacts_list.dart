@@ -12,32 +12,48 @@ class ContactsList extends StatefulWidget {
 
 class _ContactsListState extends State<ContactsList> {
   ContactsDatabase database;
-  List<Contact> contacts;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     database = ContactsDatabase();
+    initialize();
+  }
+
+  void initialize() async {
+    await database.initDatabase();
     addContactsTest();
-    contacts = await database.getContacts();
   }
 
   void addContactsTest() {
     database.insertContact(Contact(name: "Nikhil"));
   }
 
+  Future<List<Contact>> asyncFetchContacts() async {
+    return await database.getContacts();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Contacts"),
-      ),
-      body: ListView.builder(
-        itemCount: contacts.length,
-        itemBuilder: (context, index) => ListTile(
-          title: Text(contacts[index].name),
-        ),
-      ),
+    return FutureBuilder(
+      future: asyncFetchContacts(),
+      builder: (BuildContext context, AsyncSnapshot<List<Contact>> snapshot) {
+        if (snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("Contacts"),
+            ),
+            body: ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(snapshot.data[index].name),
+              ),
+            ),
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 }

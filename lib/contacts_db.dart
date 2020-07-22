@@ -5,10 +5,6 @@ import "contact_model.dart";
 class ContactsDatabase {
   static Database _db;
 
-  ContactsDatabase() {
-    initDatabase();
-  }
-
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), "contacts_database.db");
     print("path name: " + path);
