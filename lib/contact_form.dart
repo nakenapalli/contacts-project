@@ -9,6 +9,7 @@ class ContactForm extends StatefulWidget {
 
 class _ContactFormState extends State<ContactForm> {
   final _formKey = GlobalKey<FormState>();
+  String dropdownValue = "--";
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +22,45 @@ class _ContactFormState extends State<ContactForm> {
         child: Column(
           children: <Widget>[
             TextFormField(
+              decoration: InputDecoration(labelText: "Name"),
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Name cannot be empty';
                 }
                 return null;
               },
+            ),
+            TextFormField(
+              decoration: InputDecoration(labelText: "Phone"),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                return null;
+              },
+            ),
+            TextFormField(
+              decoration: InputDecoration(labelText: "Email"),
+              validator: (value) {
+                return null;
+              },
+            ),
+            DropdownButton<String>(
+              value: dropdownValue,
+              icon: Icon(Icons.arrow_downward),
+              iconSize: 24,
+              elevation: 16,
+              style: TextStyle(color: Colors.blue),
+              onChanged: (String newValue) {
+                setState(() {
+                  dropdownValue = newValue;
+                });
+              },
+              items: <String>['Home', 'Personal', 'Work']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
             RaisedButton(
               onPressed: () {
