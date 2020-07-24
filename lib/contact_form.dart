@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:validators/validators.dart";
 
 class ContactForm extends StatefulWidget {
   ContactForm({Key key}) : super(key: key);
@@ -26,21 +27,29 @@ class _ContactFormState extends State<ContactForm> {
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Name cannot be empty';
+                } else if (isAlpha(value)) {
+                  return null;
                 }
-                return null;
+                return "Incorrect format";
               },
             ),
             TextFormField(
               decoration: InputDecoration(labelText: "Phone"),
               keyboardType: TextInputType.number,
               validator: (value) {
-                return null;
+                if (isNumeric(value)) {
+                  return null;
+                }
+                return "Incorrect format";
               },
             ),
             TextFormField(
               decoration: InputDecoration(labelText: "Email"),
               validator: (value) {
-                return null;
+                if (isEmail(value)) {
+                  return null;
+                }
+                return "Incorrect format";
               },
             ),
             DropdownButton<String>(
@@ -54,7 +63,7 @@ class _ContactFormState extends State<ContactForm> {
                   dropdownValue = newValue;
                 });
               },
-              items: <String>['Home', 'Personal', 'Work']
+              items: <String>['--', 'Home', 'Personal', 'Work']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -63,6 +72,7 @@ class _ContactFormState extends State<ContactForm> {
               }).toList(),
             ),
             RaisedButton(
+              child: Text("Save"),
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   print("Entries are valid");
