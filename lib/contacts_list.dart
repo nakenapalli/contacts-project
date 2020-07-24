@@ -2,6 +2,7 @@ import 'package:contacts_project/contacts_db.dart';
 import "package:flutter/material.dart";
 import "contacts_db.dart";
 import "contact_model.dart";
+import "contact_form.dart";
 
 class ContactsList extends StatefulWidget {
   ContactsList({Key key}) : super(key: key);
@@ -33,6 +34,17 @@ class _ContactsListState extends State<ContactsList> {
     return await database.getContacts();
   }
 
+  void createNewContact() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactForm(db: database),
+      ),
+    ).then((val) {
+      database = val;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -48,6 +60,11 @@ class _ContactsListState extends State<ContactsList> {
               itemBuilder: (context, index) => ListTile(
                 title: Text(snapshot.data[index].name),
               ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add',
+              splashColor: Colors.blue[200],
+              onPressed: createNewContact,
             ),
           );
         } else {
