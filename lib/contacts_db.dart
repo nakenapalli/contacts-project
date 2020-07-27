@@ -3,13 +3,13 @@ import "package:path/path.dart";
 import "contact_model.dart";
 
 class ContactsDatabase {
-  static Database _db;
+  Database _db;
 
   Future<void> initDatabase() async {
     String path = join(await getDatabasesPath(), "contacts_database.db");
     print("path name: " + path);
 
-    final Future<Database> database = openDatabase(
+    _db = await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) {
@@ -26,8 +26,6 @@ class ContactsDatabase {
         );
       },
     );
-
-    _db = await database;
   }
 
   Future<List<Contact>> getContacts() async {

@@ -18,19 +18,21 @@ class _ContactsListState extends State<ContactsList> {
   void initState() {
     super.initState();
     database = ContactsDatabase();
-    initialize();
+    //initialize();
   }
 
-  void initialize() async {
-    await database.initDatabase();
-    addContactsTest();
-  }
+  // void initialize() async {
+  //   await database.initDatabase();
+  //   addContactsTest();
+  // }
 
-  void addContactsTest() {
-    database.insertContact(Contact(name: "Nikhil"));
+  void addContactsTest() async {
+    await database.insertContact(Contact(name: "Nikhil"));
   }
 
   Future<List<Contact>> asyncFetchContacts() async {
+    await database.initDatabase();
+    addContactsTest();
     return await database.getContacts();
   }
 
@@ -65,6 +67,7 @@ class _ContactsListState extends State<ContactsList> {
               tooltip: 'Add',
               splashColor: Colors.blue[200],
               onPressed: createNewContact,
+              child: Icon(Icons.add),
             ),
           );
         } else {
