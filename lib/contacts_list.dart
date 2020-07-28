@@ -32,7 +32,7 @@ class _ContactsListState extends State<ContactsList> {
 
   Future<List<Contact>> asyncFetchContacts() async {
     await database.initDatabase();
-    addContactsTest();
+    //addContactsTest();
     return await database.getContacts();
   }
 
@@ -43,7 +43,15 @@ class _ContactsListState extends State<ContactsList> {
         builder: (context) => ContactForm(db: database),
       ),
     ).then((val) {
-      database = val;
+      setState(() {
+        database = val;
+      });
+    });
+  }
+
+  void deleteContact(int id) async {
+    await database.deleteContact(id).then((val) {
+      setState(() {});
     });
   }
 
@@ -61,6 +69,10 @@ class _ContactsListState extends State<ContactsList> {
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) => ListTile(
                 title: Text(snapshot.data[index].name),
+                trailing: RaisedButton(
+                  onPressed: () => deleteContact(snapshot.data[index].id),
+                  child: Icon(Icons.delete),
+                ),
               ),
             ),
             floatingActionButton: FloatingActionButton(
