@@ -1,29 +1,43 @@
 import "package:flutter/material.dart";
 import "package:validators/validators.dart";
+import "package:validators/sanitizers.dart";
 import "contacts_db.dart";
 import "contact_model.dart";
 
 class ContactForm extends StatefulWidget {
-  ContactForm({Key key, this.db}) : super(key: key);
+  ContactForm({Key key, this.db, this.contact}) : super(key: key);
 
   final ContactsDatabase db;
+  final Contact contact;
 
   @override
-  _ContactFormState createState() => _ContactFormState(db);
+  _ContactFormState createState() => _ContactFormState(db, contact);
 }
 
 class _ContactFormState extends State<ContactForm> {
-  _ContactFormState(this.database);
+  _ContactFormState(this.database, this.contact);
 
   ContactsDatabase database;
+  Contact contact;
   final _formKey = GlobalKey<FormState>();
-  String dropdownValue = "--";
 
-  String newName = "";
-  String newPhone = "";
-  String newEmail = "";
-  String newType = "--";
-  String newCountry = "";
+  String newName;
+  String newPhone;
+  String newEmail;
+  String newType;
+  String newCountry;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      newName = contact.name;
+      newPhone = contact.phone;
+      newEmail = contact.email;
+      newType = contact.type;
+      newCountry = contact.country;
+    });
+  }
 
   void saveContact() async {
     if (_formKey.currentState.validate()) {
@@ -31,6 +45,7 @@ class _ContactFormState extends State<ContactForm> {
       _formKey.currentState.save();
 
       Contact newContact = Contact(
+        id: contact.id,
         name: newName,
         phone: newPhone,
         email: newEmail,
@@ -54,11 +69,12 @@ class _ContactFormState extends State<ContactForm> {
         child: Column(
           children: <Widget>[
             TextFormField(
+              initialValue: newName,
               decoration: InputDecoration(labelText: "Name"),
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Name cannot be empty';
-                } else if (isAlpha(value)) {
+                } else if (isAlpha(value.replaceAll(RegExp(r"\s+"), ""))) {
                   return null;
                 }
                 return "Incorrect format";
@@ -70,10 +86,11 @@ class _ContactFormState extends State<ContactForm> {
               },
             ),
             TextFormField(
+              initialValue: newPhone,
               decoration: InputDecoration(labelText: "Phone"),
               keyboardType: TextInputType.number,
               validator: (value) {
-                if (isNumeric(value)) {
+                if (isNumeric(trim(value)) || value.isEmpty) {
                   return null;
                 }
                 return "Incorrect format";
@@ -85,9 +102,10 @@ class _ContactFormState extends State<ContactForm> {
               },
             ),
             TextFormField(
+              initialValue: newEmail,
               decoration: InputDecoration(labelText: "Email"),
               validator: (value) {
-                if (isEmail(value)) {
+                if (isEmail(trim(value)) || value.isEmpty) {
                   return null;
                 }
                 return "Incorrect format";

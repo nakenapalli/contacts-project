@@ -40,7 +40,32 @@ class _ContactsListState extends State<ContactsList> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ContactForm(db: database),
+        builder: (context) => ContactForm(
+          db: database,
+          contact: Contact(
+            name: "",
+            phone: "",
+            email: "",
+            type: "--",
+            country: "",
+          ),
+        ),
+      ),
+    ).then((val) {
+      setState(() {
+        database = val;
+      });
+    });
+  }
+
+  void editContact(Contact selected) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactForm(
+          db: database,
+          contact: selected,
+        ),
       ),
     ).then((val) {
       setState(() {
@@ -73,6 +98,7 @@ class _ContactsListState extends State<ContactsList> {
                   onPressed: () => deleteContact(snapshot.data[index].id),
                   child: Icon(Icons.delete),
                 ),
+                onTap: () => editContact(snapshot.data[index]),
               ),
             ),
             floatingActionButton: FloatingActionButton(
