@@ -3,6 +3,9 @@ import "package:validators/validators.dart";
 import "package:validators/sanitizers.dart";
 import "contacts_db.dart";
 import "contact_model.dart";
+import 'countries_api.dart' as api;
+import 'country_model.dart';
+import 'dart:convert';
 
 class ContactForm extends StatefulWidget {
   ContactForm({Key key, this.db, this.contact}) : super(key: key);
@@ -27,6 +30,8 @@ class _ContactFormState extends State<ContactForm> {
   String newType;
   String newCountry;
 
+  List<Country> countryList;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +42,16 @@ class _ContactFormState extends State<ContactForm> {
       newType = contact.type;
       newCountry = contact.country;
     });
+    getCountries();
+    //print(countryList.length);
+  }
+
+  void getCountries() async {
+    await api.fetchCountryList().then((response) => setState(() {
+          var data = json.decode(response.body);
+          Iterable list = data['countryList'] as List;
+          countryList = list.map((model) => Country.fromJson(model)).toList();
+        }));
   }
 
   void saveContact() async {
@@ -127,7 +142,7 @@ class _ContactFormState extends State<ContactForm> {
                   newType = newValue;
                 });
               },
-              items: <String>['--', 'Home', 'Personal', 'Work']
+              items: <String>['Home', 'Personal', 'Work']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -135,6 +150,25 @@ class _ContactFormState extends State<ContactForm> {
                 );
               }).toList(),
             ),
+            // DropdownButton<String>(
+            //   value: newCountry,
+            //   icon: Icon(Icons.arrow_downward),
+            //   iconSize: 24,
+            //   elevation: 16,
+            //   style: TextStyle(color: Colors.blue),
+            //   onChanged: (String newValue) {
+            //     setState(() {
+            //       newCountry = newValue;
+            //     });
+            //   },
+            //   items:
+            //       countryList.map<DropdownMenuItem<String>>((Country country) {
+            //     return DropdownMenuItem<String>(
+            //       value: country.countryName,
+            //       child: Text(country.countryName),
+            //     );
+            //   }).toList(),
+            // ),
             RaisedButton(
               child: Text("Save"),
               onPressed: saveContact,
