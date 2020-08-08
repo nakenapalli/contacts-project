@@ -43,7 +43,7 @@ class _ContactFormState extends State<ContactForm> {
       newCountry = contact.country;
     });
     getCountries();
-    //print(countryList.length);
+    print(countryList.length);
   }
 
   void getCountries() async {

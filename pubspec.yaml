@@ -26,6 +26,7 @@ dependencies:
   sqflite:
   path:
   validators: ^2.0.1
+  http: ^0.12.1
 
 
   # The following adds the Cupertino Icons font to your application.
